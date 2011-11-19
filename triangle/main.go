@@ -113,6 +113,7 @@ func display() {
 	
 	program.Use()
 	attributeCoord2d.EnableArray()
+	
 	attributeCoord2d.AttribPointer(2, false, 0, triangle)
 	
 	gl.DrawArrays(gl.TRIANGLES, 0, 3)
