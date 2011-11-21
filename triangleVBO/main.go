@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	
+
 	"gl"
 	"github.com/jteeuwen/glfw"
 )
 
 const (
 	ScreenHeight = 640
-	ScreenWidth = 640
-	WindowTitle = "OpenGL 3 example - TriangleVBO"
+	ScreenWidth  = 640
+	WindowTitle  = "OpenGL 3 example - TriangleVBO"
 )
 
 const (
@@ -20,7 +20,7 @@ const (
 	FragmentShaderType
 )
 
-var triangle = []float32 {
+var triangle = []float32{
 	0.0, 0.8,
 	-0.8, -0.8,
 	0.8, -0.8}
@@ -71,10 +71,9 @@ func initResources() {
 	var err os.Error
 	buffer = gl.GenBuffer()
 	buffer.Bind(gl.ARRAY_BUFFER)
-	gl.BufferData(gl.ARRAY_BUFFER, len(triangle) * 4, triangle, gl.STATIC_DRAW)
+	gl.BufferData(gl.ARRAY_BUFFER, len(triangle)*4, triangle, gl.STATIC_DRAW)
 	gl.Buffer(0).Bind(gl.ARRAY_BUFFER)
-	
-	
+
 	vShader, err = createShader("triangle.v.glsl", VertexShaderType)
 	if err != nil {
 		fmt.Printf("Shader: %s\n", err)
@@ -83,12 +82,12 @@ func initResources() {
 	if err != nil {
 		fmt.Printf("Shader: %s\n", err)
 	}
-	
+
 	program = gl.CreateProgram()
 	program.AttachShader(vShader)
 	program.AttachShader(fShader)
 	program.Link()
-	
+
 	attribLoc = program.GetAttribLocation("coord2d")
 }
 
@@ -100,43 +99,43 @@ func main() {
 		return
 	}
 	defer glfw.Terminate()
-	
+
 	glfw.OpenWindowHint(glfw.WindowNoResize, 1)
 	glfw.OpenWindowHint(glfw.OpenGLDebugContext, 1)
-	
+
 	glfw.OpenWindowHint(glfw.OpenGLVersionMajor, 3)
 	glfw.OpenWindowHint(glfw.OpenGLVersionMinor, 3)
 	glfw.OpenWindowHint(glfw.OpenGLProfile, 1)
 	glfw.OpenWindowHint(glfw.OpenGLForwardCompat, 1)
-	
+
 	err = glfw.OpenWindow(ScreenWidth, ScreenHeight, 0, 0, 0, 0, 0, 0, glfw.Windowed)
 	if err != nil {
 		fmt.Printf("GLFW: %s\n", err)
 		return
 	}
 	defer glfw.CloseWindow()
-	
+
 	glfw.SetSwapInterval(1)
 	glfw.SetWindowTitle(WindowTitle)
-	
+
 	major, minor, rev := glfw.GLVersion()
 	fmt.Printf("GL-Version: %d, %d, %d\n", major, minor, rev)
-	
+
 	initStatus := gl.Init() // Init glew
-	
+
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-	
+
 	fmt.Printf("Error-code: %d Init-Status: %d\n", gl.GetError(), initStatus)
-	
+
 	initResources()
-	
+
 	fmt.Printf("Error-code: %d Init-Status: %d\n", gl.GetError(), initStatus)
-	
+
 	for i := 0; i < 1000; i++ {
 		display()
 	}
-	
+
 	// Free resources
 	free()
 }
@@ -149,16 +148,16 @@ func free() {
 func display() {
 	gl.ClearColor(0.0, 0.0, 0.0, 0.0)
 	gl.Clear(gl.COLOR_BUFFER_BIT)
-	
+
 	program.Use()
 	attribLoc.EnableArray()
-	
+
 	buffer.Bind(gl.ARRAY_BUFFER)
 	attribLoc.AttribPointerOffset(2, gl.FLOAT, false, 0, 0)
 	gl.DrawArrays(gl.TRIANGLES, 0, 3)
-	
+
 	gl.Buffer(0).Bind(gl.ARRAY_BUFFER)
 	attribLoc.DisableArray()
-	
+
 	glfw.SwapBuffers()
 }

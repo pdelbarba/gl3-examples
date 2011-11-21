@@ -3,15 +3,15 @@ package main
 import (
 	"fmt"
 	"os"
-	
+
 	"gl"
 	"github.com/jteeuwen/glfw"
 )
 
 const (
 	ScreenHeight = 640
-	ScreenWidth = 640
-	WindowTitle = "OpenGL 3 example"
+	ScreenWidth  = 640
+	WindowTitle  = "OpenGL 3 example"
 )
 
 var triangle = []float32{
@@ -30,7 +30,7 @@ var attributeCoord2d gl.AttribLocation
 
 func initResources() {
 	var infoLog string
-  
+
 	vs = gl.CreateShader(gl.VERTEX_SHADER)
 	vs.Source(vertexShader)
 	vs.Compile()
@@ -38,7 +38,7 @@ func initResources() {
 	if len(infoLog) != 0 {
 		fmt.Println(infoLog)
 	}
-	
+
 	fs = gl.CreateShader(gl.FRAGMENT_SHADER)
 	fs.Source(fragmentShader)
 	fs.Compile()
@@ -46,7 +46,7 @@ func initResources() {
 	if len(infoLog) != 0 {
 		fmt.Println(infoLog)
 	}
-	
+
 	program = gl.CreateProgram()
 	program.AttachShader(vs)
 	program.AttachShader(fs)
@@ -55,7 +55,7 @@ func initResources() {
 	if len(infoLog) != 0 {
 		fmt.Println(infoLog)
 	}
-	
+
 	attribute_name := "coord2d"
 	attributeCoord2d = program.GetAttribLocation(attribute_name)
 	if attributeCoord2d == -1 {
@@ -71,38 +71,38 @@ func main() {
 		return
 	}
 	defer glfw.Terminate()
-	
+
 	glfw.OpenWindowHint(glfw.WindowNoResize, 1)
 	glfw.OpenWindowHint(glfw.OpenGLDebugContext, 1)
-	
+
 	glfw.OpenWindowHint(glfw.OpenGLVersionMajor, 3)
 	glfw.OpenWindowHint(glfw.OpenGLVersionMinor, 3)
 	glfw.OpenWindowHint(glfw.OpenGLProfile, 1)
 	glfw.OpenWindowHint(glfw.OpenGLForwardCompat, 1)
-	
+
 	err = glfw.OpenWindow(ScreenWidth, ScreenHeight, 0, 0, 0, 0, 0, 0, glfw.Windowed)
 	if err != nil {
 		fmt.Printf("GLFW: %s\n", err)
 		return
 	}
 	defer glfw.CloseWindow()
-	
+
 	glfw.SetSwapInterval(1)
 	glfw.SetWindowTitle(WindowTitle)
-	
+
 	major, minor, rev := glfw.GLVersion()
 	fmt.Printf("GL-Version: %d, %d, %d\n", major, minor, rev)
-	
+
 	initStatus := gl.Init() // Init glew
-	
+
 	fmt.Printf("Error-code: %d Init-Status: %d\n", gl.GetError(), initStatus)
-	
+
 	initResources()
-	
+
 	for i := 0; i < 1000; i++ {
 		display()
 	}
-	
+
 	// Free resources
 	program.Delete()
 }
@@ -110,14 +110,14 @@ func main() {
 func display() {
 	gl.ClearColor(0.0, 0.0, 0.0, 0.0)
 	gl.Clear(gl.COLOR_BUFFER_BIT)
-	
+
 	program.Use()
 	attributeCoord2d.EnableArray()
-	
+
 	attributeCoord2d.AttribPointer(2, false, 0, triangle)
-	
+
 	gl.DrawArrays(gl.TRIANGLES, 0, 3)
 	attributeCoord2d.DisableArray()
-	
+
 	glfw.SwapBuffers()
 }
