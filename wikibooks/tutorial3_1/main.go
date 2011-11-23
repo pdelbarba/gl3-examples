@@ -187,11 +187,11 @@ func display() {
 	vboTriangle.Bind(gl.ARRAY_BUFFER)
 
 	attributeCoord2d.EnableArray()
-	attributeColor.EnableArray()
-
 	// Describe our vertices array to OpenGL (it can't guess its format automatically)
-	attributeCoord2d.AttribPointer(2, false, 5*4, &triangleAttributes[0])
-	attributeColor.AttribPointer(3, false, 5*4, &triangleAttributes[2])
+	attributeCoord2d.AttribPointerOffset(2, gl.FLOAT, false, 5*4, 0)
+
+	attributeColor.EnableArray()
+	attributeColor.AttribPointerOffset(3, gl.FLOAT, false, 5*4, 2*4)
 
 	// Push each element in buffer_vertices to the vertex shader
 	gl.DrawArrays(gl.TRIANGLES, 0, 3)
