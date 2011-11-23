@@ -92,7 +92,10 @@ func initResources() {
 	program.AttachShader(vs)
 	program.AttachShader(fs)
 	program.Link()
-	// TODO: Check for linking errors
+	infoLog := program.GetInfoLog()
+	if len(infoLog) != 0 {
+		fmt.Printf("Program: %s\n", infoLog)
+	}
 
 	// Get the attribute location from the GLSL program (here from the vertex shader)
 	attributeName := "coord2d"
