@@ -1,4 +1,4 @@
-package main
+package math3d
 
 import (
 	"math"
