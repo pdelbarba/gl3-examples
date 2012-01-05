@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"time"
 	"os"
-	
+
 	"math3d"
 
 	"gl"
