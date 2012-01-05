@@ -186,8 +186,8 @@ func main() {
 		<-ticker.C
 		move := float32(math.Sin(glfw.Time()))
 		angle := float32(glfw.Time())
-		matrix = MakeTranslationMatrix(move, 1.0, 1.0)
-		matrix = matrix.Multiply(MakeZRotationMatrix(angle))
+		matrix = MakeTranslationMatrix(move, 0.0, 0.0)
+		matrix = matrix.Multiply(MakeZRotationMatrix(angle)).Transposed()
 		display()
 	}
 
@@ -212,7 +212,7 @@ func display() {
 	// Use the GLSL program
 	program.Use()
 
-	uniformMTransform.UniformMatrix4fv(false, 1, matrix)
+	uniformMTransform.UniformMatrix4fv(1, false, matrix)
 
 	vboTriangle.Bind(gl.ARRAY_BUFFER)
 
