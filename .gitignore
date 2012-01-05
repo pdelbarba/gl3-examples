@@ -4,3 +4,6 @@ _obj*
 _test*
 *~
 *.6
+build
+bin
+*.prof
