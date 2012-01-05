@@ -7,6 +7,8 @@ import (
 	"runtime"
 	"time"
 	"os"
+	
+	"math3d"
 
 	"gl"
 	"github.com/jteeuwen/glfw"
@@ -186,8 +188,8 @@ func main() {
 		<-ticker.C
 		move := float32(math.Sin(glfw.Time()))
 		angle := float32(glfw.Time())
-		matrix = MakeTranslationMatrix(move, 0.0, 0.0)
-		matrix = matrix.Multiply(MakeZRotationMatrix(angle)).Transposed()
+		matrix = math3d.MakeTranslationMatrix(move, 0.0, 0.0)
+		matrix = matrix.Multiply(math3d.MakeZRotationMatrix(angle)).Transposed()
 		display()
 	}
 
@@ -202,7 +204,7 @@ func free() {
 	vboTriangle.Delete()
 }
 
-var matrix = MakeIdentity()
+var matrix = math3d.MakeIdentity()
 
 func display() {
 	// Clear the background as white
