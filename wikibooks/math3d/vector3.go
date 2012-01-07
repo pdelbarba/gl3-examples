@@ -14,8 +14,20 @@ func (v Vector3) Sub(vec Vector3) *Vector3 {
 	return &Vector3{v[0] - vec[0], v[1] - vec[1], v[2] - vec[2]}
 }
 
+func (v Vector3) Multiplied(vec Vector3) Vector3 {
+	return Vector3{v[0] * vec[0], v[1] * vec[1], v[2] * vec[2]}
+}
+
 func (v Vector3) LengthSqrt() float32 {
 	return v[0]*v[0] + v[1]*v[1] + v[2]*v[2]
+}
+
+func (v Vector3) Dot(a Vector3) float32 {
+	return v[0]*a[0] + v[1]*a[1] + v[2]*a[2]
+}
+
+func (v Vector3) Scaled(a float32) Vector3 {
+	return Vector3{v[0] * a, v[1] * a, v[2] * a}
 }
 
 // Returns the length of the vector.
