@@ -85,20 +85,20 @@ func initResources() {
 	// Vertex Shader
 	vs = gl.CreateShader(gl.VERTEX_SHADER)
 	vsSrc := gl.GLStringArray(vsSource)
-	length := gl.Int(-1)
-	gl.ShaderSource(vs, gl.Sizei(1), &vsSrc[0], &length)
+	defer gl.GLStringArrayFree(vsSrc)
+	gl.ShaderSource(vs, gl.Sizei(len(vsSrc)), &vsSrc[0], nil)
 	gl.CompileShader(vs)
 	gl.GetShaderiv(vs, gl.COMPILE_STATUS, &compileOk)
 	if compileOk == 0 {
 		errNum := gl.GetError()
 		fmt.Printf("Error in vertex shader: %d\n", errNum)
 	}
-	gl.GLStringArrayFree(vsSrc)
 
 	// Fragment Shader
 	fs = gl.CreateShader(gl.FRAGMENT_SHADER)
 	fsSrc := gl.GLStringArray(fsSource)
-	gl.ShaderSource(fs, gl.Sizei(1), &fsSrc[0], &length)
+	defer gl.GLStringArrayFree(fsSrc)
+	gl.ShaderSource(fs, gl.Sizei(1), &fsSrc[0], nil)
 	gl.CompileShader(fs)
 	gl.GetShaderiv(fs, gl.COMPILE_STATUS, &compileOk)
 	if compileOk == 0 {
@@ -120,12 +120,12 @@ func initResources() {
 
 	// Get the attribute location from the GLSL program (here from the vertex shader)
 	attributeName := gl.GLString("coord2d")
+	defer gl.GLStringFree(attributeName)
 	attributeTemp := gl.GetAttribLocation(program, attributeName)
 	if attributeTemp == -1 {
 		fmt.Printf("Could not bind attribute %s\n", gl.GoString(attributeName))
 	}
 	attributeCoord2d = gl.Uint(attributeTemp)
-	gl.GLStringFree(attributeName)
 }
 
 func free() {
