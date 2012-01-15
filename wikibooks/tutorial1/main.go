@@ -63,10 +63,10 @@ func main() {
 
 	glfw.SetWindowTitle(WindowTitle)
 
-	// Init glew
+	// Init extension loading
 	err = gl.Init()
 	if err != nil {
-		fmt.Printf("Init glew failed with %s.\n", err)
+		fmt.Printf("Init OpenGL extension loading failed with %s.\n", err)
 	}
 
 	initResources()
@@ -93,6 +93,7 @@ func initResources() {
 		errNum := gl.GetError()
 		fmt.Printf("Error in vertex shader: %d\n", errNum)
 	}
+	gl.GLStringArrayFree(vsSrc)
 
 	// Fragment Shader
 	fs = gl.CreateShader(gl.FRAGMENT_SHADER)
@@ -104,6 +105,7 @@ func initResources() {
 		errNum := gl.GetError()
 		fmt.Printf("Error in fragment shader: %d\n", errNum)
 	}
+	gl.GLStringArrayFree(fsSrc)
 
 	// GLSL program
 	program = gl.CreateProgram()
@@ -123,6 +125,7 @@ func initResources() {
 		fmt.Printf("Could not bind attribute %s\n", gl.GoString(attributeName))
 	}
 	attributeCoord2d = gl.Uint(attributeTemp)
+	gl.GLStringFree(attributeName)
 }
 
 func free() {
