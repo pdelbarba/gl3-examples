@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	"os"
 
-	"gl"
+	gl "github.com/chsc/gogl/gl33"
 	"github.com/jteeuwen/glfw"
 )
 
@@ -12,16 +11,19 @@ const (
 	ScreenHeight = 480
 	ScreenWidth  = 640
 	WindowTitle  = "OpenGL 3 tutorial 1 - My First Triangle"
-	vsSource     = "#version 120\n" +
-		"attribute vec2 coord2d; " +
-		"void main(void) { " +
-		"  gl_Position = vec4(coord2d, 0.0, 1.0); " +
+)
+
+var (
+	vsSource = "#version 120\n" +
+		"attribute vec2 coord2d;\n" +
+		"void main(void) {\n" +
+		"  gl_Position = vec4(coord2d, 0.0, 1.0);\n" +
 		"}"
 	fsSource = "#version 120\n" +
-		"void main(void) {" +
-		"  gl_FragColor[0] = 0.0; " +
-		"  gl_FragColor[1] = 0.0; " +
-		"  gl_FragColor[2] = 1.0; " +
+		"void main(void) {\n" +
+		"  gl_FragColor[0] = 0.0;\n" +
+		"  gl_FragColor[1] = 0.0;\n" +
+		"  gl_FragColor[2] = 1.0;\n" +
 		"}"
 )
 
@@ -31,16 +33,16 @@ var triangleVertices = []float32{
 	0.8, -0.8,
 }
 
-var vs gl.Shader
-var fs gl.Shader
-var program gl.Program
-var attributeCoord2d gl.AttribLocation
+var vs gl.Uint
+var fs gl.Uint
+var program gl.Uint
+var attributeCoord2d gl.Uint
 
 func main() {
 	fmt.Println("OpenGL Programming/Modern OpenGL Introduction")
 	fmt.Println("Tutorial taken from http://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Introduction")
 
-	var err os.Error
+	var err error
 	err = glfw.Init()
 	if err != nil {
 		fmt.Printf("GLFW: %s\n", err)
@@ -62,9 +64,9 @@ func main() {
 	glfw.SetWindowTitle(WindowTitle)
 
 	// Init glew
-	initStatus := gl.Init()
-	if initStatus != 0 {
-		fmt.Printf("Init glew failed with %d.\n", initStatus)
+	err = gl.Init()
+	if err != nil {
+		fmt.Printf("Init glew failed with %s.\n", err)
 	}
 
 	initResources()
@@ -79,46 +81,53 @@ func main() {
 }
 
 func initResources() {
-	var status int
+	var compileOk gl.Int
 	// Vertex Shader
 	vs = gl.CreateShader(gl.VERTEX_SHADER)
-	vs.Source(vsSource)
-	vs.Compile()
-	status = vs.Get(gl.COMPILE_STATUS)
-	if status == 0 {
-		fmt.Printf("Error in vertex shader\n")
+	vsSrc := gl.GLStringArray(vsSource)
+	length := gl.Int(-1)
+	gl.ShaderSource(vs, gl.Sizei(1), &vsSrc[0], &length)
+	gl.CompileShader(vs)
+	gl.GetShaderiv(vs, gl.COMPILE_STATUS, &compileOk)
+	if compileOk == 0 {
+		errNum := gl.GetError()
+		fmt.Printf("Error in vertex shader: %d\n", errNum)
 	}
 
 	// Fragment Shader
 	fs = gl.CreateShader(gl.FRAGMENT_SHADER)
-	fs.Source(fsSource)
-	fs.Compile()
-	status = fs.Get(gl.COMPILE_STATUS)
-	if status == 0 {
-		fmt.Printf("Error in fragment shader\n")
+	fsSrc := gl.GLStringArray(fsSource)
+	gl.ShaderSource(fs, gl.Sizei(1), &fsSrc[0], &length)
+	gl.CompileShader(fs)
+	gl.GetShaderiv(fs, gl.COMPILE_STATUS, &compileOk)
+	if compileOk == 0 {
+		errNum := gl.GetError()
+		fmt.Printf("Error in fragment shader: %d\n", errNum)
 	}
 
 	// GLSL program
 	program = gl.CreateProgram()
-	program.AttachShader(vs)
-	program.AttachShader(fs)
-	program.Link()
-	status = program.Get(gl.LINK_STATUS)
-	if status == 0 {
-		fmt.Printf("glLinkProgram\n")
+	gl.AttachShader(program, vs)
+	gl.AttachShader(program, fs)
+	gl.LinkProgram(program)
+	gl.GetProgramiv(program, gl.LINK_STATUS, &compileOk)
+	if compileOk == 0 {
+		fmt.Printf("Error in program.\n")
+
 	}
 
 	// Get the attribute location from the GLSL program (here from the vertex shader)
-	attributeName := "coord2d"
-	attributeCoord2d = program.GetAttribLocation(attributeName)
-	if attributeCoord2d == -1 {
-		fmt.Printf("Could not bind attribute %s\n", attributeName)
+	attributeName := gl.GLString("coord2d")
+	attributeTemp := gl.GetAttribLocation(program, attributeName)
+	if attributeTemp == -1 {
+		fmt.Printf("Could not bind attribute %s\n", gl.GoString(attributeName))
 	}
+	attributeCoord2d = gl.Uint(attributeTemp)
 }
 
 func free() {
 	// Free OpenGL buffers
-	program.Delete()
+	gl.DeleteProgram(program)
 }
 
 func display() {
@@ -127,17 +136,17 @@ func display() {
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 
 	// Use the GLSL program
-	program.Use()
+	gl.UseProgram(program)
 
-	attributeCoord2d.EnableArray()
+	gl.EnableVertexAttribArray(attributeCoord2d)
 
 	// Describe our vertices array to OpenGL (it can't guess its format automatically)
-	attributeCoord2d.AttribPointer(2, false, 0, triangleVertices)
+	gl.VertexAttribPointer(attributeCoord2d, 2, gl.FLOAT, gl.FALSE, 0, gl.Pointer(&triangleVertices[0]))
 
 	// Push each element in buffer_vertices to the vertex shader
 	gl.DrawArrays(gl.TRIANGLES, 0, 3)
 
-	attributeCoord2d.DisableArray()
+	gl.DisableVertexAttribArray(attributeCoord2d)
 
 	// Display the result
 	glfw.SwapBuffers()
