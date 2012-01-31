@@ -4,5 +4,6 @@ A custom OpenGL Go binding ( https://github.com/Agon/Go-OpenGL ) is used.
 
 I am slowly converting the examples to a different OpenGL Go binding which implements the API directly and completly.
 New binding is located here: https://github.com/chsc/gogl/
+Also the converted examples require Go weekly up to Go 1.
 
 The file texture.jpg is taken from http://commons.wikimedia.org/wiki/File:OpenGL_Tutorial_Texture_Flipped.png

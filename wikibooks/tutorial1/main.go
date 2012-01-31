@@ -105,7 +105,6 @@ func initResources() {
 		errNum := gl.GetError()
 		fmt.Printf("Error in fragment shader: %d\n", errNum)
 	}
-	gl.GLStringArrayFree(fsSrc)
 
 	// GLSL program
 	program = gl.CreateProgram()
