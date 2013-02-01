@@ -72,7 +72,7 @@ func main() {
 	initResources()
 
 	// Render loop
-	for {
+	for glfw.WindowParam(glfw.Opened) == 1 {
 		display()
 	}
 
